@@ -8,6 +8,7 @@ public class Exercise003 {
         System.out.println(new Solution().lengthOfLongestSubstring("dvdf"));
     }
 
+    // 基于查找地方法 可以采用hashmap会更加快速
     static class Solution {
         public int lengthOfLongestSubstring(String s) {
             if (s == null || s.length() == 0) {
