@@ -22,64 +22,36 @@ public class Exercise005 {
      **/
 
     // 题解思路：
-    // 采用dp方法 定义dp[i]为从i开始的最大回文子串
-    // 遍历过程中 dp[i+1] 是基于dp[i] 的子串 去掉开始的字符之后的最大子串
+    // 采用dp方法 定义dp[i,j] 表示 i 到 j 是否是 回文子串
     public String longestPalindrome(String s) {
-        if (s == null || s.length() == 0) {
-            return "";
+        if (s == null || s.length() <= 1) {
+            return s;
         }
-        HashMap<Character, Integer> chs = new HashMap<>();
-        int[] dp = new int[s.length()];
-        int len = 0;
-        for (int i = 0; i < s.length(); i++) {
+        int len = s.length();
+        boolean[][] dp = new boolean[len][len];
+        for (int i = len - 1; i >= 0; i--) {
             Character chi = s.charAt(i);
-            if (i != 0) {
-                Character chii = s.charAt(i - 1);
-                int num = chs.get(chii);
-                if (num == 1) {
-                    chs.remove(chii);
+            for (int j = len - 1; j >= i; j--) {
+                Character chj = s.charAt(j);
+                if (j - i <= 2) {
+                    dp[i][j] = chj == chi;
                 } else {
-                    chs.put(chii, num - 1);
+                    dp[i][j] = (chj == chi) && dp[i + 1][j - 1];
                 }
-                len--;
-            } else {
-                chs.put(s.charAt(0), 1);
-                len = 1;
-                dp[0] = 1;
-            }
-            int num = chs.get(chi);
-            if (num > 1) {
-                int j = i + 1;
-                for (; j < s.length(); j++) {
-                    Character chj = s.charAt(j);
-                    if (chj == chi) {
-                        dp[i] = j - i + 1;
-                        break;
-                    }
-                }
-            } else {
-                int j = i + len;
-                for (; j < s.length(); j++) {
-                    Character chj = s.charAt(j);
-                    int num1 = chs.containsKey(chj) ? chs.get(chj) : 0;
-                    chs.put(chj, num1 + 1);
-                    len++;
-                    if (chj == chi) {
-                        dp[i] = j - i + 1;
-                        break;
-                    }
-                }
-//                if (j == s.length()) {
-//                    break;
-//                }
             }
         }
-        int index = 0;
-        for (int l = 0; l < dp.length; l++) {
-            if (dp[l] > dp[index]) {
-                index = l;
+        int left = 0, right = 0, max = 0;
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = len - 1; j >= i; j--) {
+                if (dp[i][j]) {
+                    if (max < j - i + 1) {
+                        left = i;
+                        right = j;
+                        max = j - i + 1;
+                    }
+                }
             }
         }
-        return s.substring(index, dp[index] + index);
+        return s.substring(left, right + 1);
     }
 }
