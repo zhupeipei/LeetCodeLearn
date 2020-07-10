@@ -1,8 +1,5 @@
 package com.aire;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Exercise007 {
     public static void main(String[] args) {
         System.out.println(new Exercise007().reverse(-123));
