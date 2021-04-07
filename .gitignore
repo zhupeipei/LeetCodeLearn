@@ -9,3 +9,5 @@
 .idea/
 *.iml
 out
+.gradle
+/.gradle/*
