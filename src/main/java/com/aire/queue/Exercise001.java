@@ -5,14 +5,21 @@ import java.util.*;
 // 打开转盘锁
 public class Exercise001 {
     public static void main(String[] args) {
-        String[] deadends = new String[]{"0201", "0101", "0102", "1212", "2002"};
-        String target = "0202";
-        new Exercise001().openLock(deadends, target);
+        String[] deadends = new String[]{"5557", "5553", "5575", "5535", "5755", "5355", "7555", "3555", "6655", "6455", "4655", "4455", "5665", "5445", "5645", "5465", "5566", "5544", "5564", "5546", "6565", "4545", "6545", "4565", "5656", "5454", "5654", "5456", "6556", "4554", "4556", "6554"};
+        String target = "5555";
+        System.out.println(new Exercise001().openLock(deadends, target));;
     }
 
     public int openLock(String[] deadends, String target) {
         Set<Integer> deadendsSet = processDeadends(deadends);
         int targetVal = str2Val(target);
+
+        if (targetVal == 0) {
+            return 0;
+        }
+        if (deadendsSet.contains(targetVal) || deadendsSet.contains(0)) {
+            return -1;
+        }
 
         Queue<Integer> queue = new LinkedList<>();
         int rootVal = arr2val(0, 0, 0, 0);
@@ -22,24 +29,41 @@ public class Exercise001 {
 
         TreeNode node = new TreeNode();
         node.rootVal = rootVal;
+        node.root = null;
 
-        int cengshu = 1;
+        List<TreeNode> res = new ArrayList<>();
+
         while (!queue.isEmpty()) {
             Integer val = queue.poll();
-
             TreeNode node1 = findNode(val, node);
-
-            cengshu++;
-            int result = bfs(queue, allVals, val2arr(val), deadendsSet, targetVal, node1);
-            if (result != -1) {
-                System.out.println("result: " + result + ", cengshu: " + cengshu);
-                break;
-            }
+            List<TreeNode> result = bfs(queue, allVals, val2arr(val), deadendsSet, targetVal, node1);
+            res.addAll(result);
         }
 
-        System.out.println("第" + cengshu + "层");
+        if (res.size() == 0) {
+            return -1;
+        }
+        int minVal = Integer.MAX_VALUE;
+        for (int i = 0; i < res.size(); i++) {
+            TreeNode node2 = res.get(i);
+            minVal = Math.min(minVal, printResult(node2));
+        }
 
-        return -1;
+        System.out.println(minVal);
+
+        return minVal;
+    }
+
+    private int printResult(TreeNode node) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (node != null) {
+            i++;
+            sb.append(val2Str(node.rootVal) + " -> ");
+            node = node.root;
+        }
+        System.out.println(sb.toString() + ", " + i);
+        return i - 1;
     }
 
     private TreeNode findNode(int val, TreeNode node) {
@@ -88,9 +112,17 @@ public class Exercise001 {
     private int[] val2arr(int val) {
         int val1 = val >> 12;
         int val2 = (val >> 8) - (val1 << 4);
-        int val3 = (val >> 4) - (val2 << 4);
-        int val4 = val - (val3 << 4);
+        int val3 = (val >> 4) - ((val >> 8) << 4);
+        int val4 = val - ((val >> 4) << 4);
         return new int[]{val1, val2, val3, val4};
+    }
+
+    private String val2Str(int val) {
+        int val1 = val >> 12;
+        int val2 = (val >> 8) - (val1 << 4);
+        int val3 = (val >> 4) - ((val >> 8) << 4);
+        int val4 = val - ((val >> 4) << 4);
+        return val1 + "-" + val2 + "-" + val3 + "-" + val4;
     }
 
     private int arr2val(int arr0, int arr1, int arr2, int arr3) {
@@ -101,7 +133,8 @@ public class Exercise001 {
         return (arr[0] << 12) + (arr[1] << 8) + (arr[2] << 4) + arr[3];
     }
 
-    private int bfs(Queue<Integer> queue, Set<Integer> allVals, int[] val, Set<Integer> deadends, int target, TreeNode node) {
+    private List<TreeNode> bfs(Queue<Integer> queue, Set<Integer> allVals, int[] val, Set<Integer> deadends, int target, TreeNode node) {
+        List<TreeNode> nodes = new ArrayList<>();
         int val1 = val[0], val2 = val[1], val3 = val[2], val4 = val[3];
         int[] vals = new int[]{
                 arr2val(addVal(val1), val2, val3, val4),
@@ -120,18 +153,19 @@ public class Exercise001 {
                 continue;
             }
             allVals.add(keyVal);
-            if (deadends.contains(val)) {
+            if (deadends.contains(keyVal)) {
                 continue;
-            }
-            if (target == keyVal) {
-                return 1;
             }
             TreeNode childNode = new TreeNode();
             childNode.rootVal = keyVal;
+            childNode.root = node;
             node.childNode.add(childNode);
+            if (target == keyVal) {
+                nodes.add(childNode);
+            }
             queue.add(keyVal);
         }
-        return -1;
+        return nodes;
     }
 
     private int addVal(int val) {
