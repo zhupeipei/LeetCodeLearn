@@ -7,10 +7,75 @@ public class Exercise001 {
     public static void main(String[] args) {
         String[] deadends = new String[]{"5557", "5553", "5575", "5535", "5755", "5355", "7555", "3555", "6655", "6455", "4655", "4455", "5665", "5445", "5645", "5465", "5566", "5544", "5564", "5546", "6565", "4545", "6545", "4565", "5656", "5454", "5654", "5456", "6556", "4554", "4556", "6554"};
         String target = "5555";
-        System.out.println(new Exercise001().openLock(deadends, target));;
+        long time = System.currentTimeMillis();
+        System.out.println(new Exercise001().openLock(deadends, target));
+        System.out.println(System.currentTimeMillis() - time);
     }
 
     public int openLock(String[] deadends, String target) {
+        Set<Integer> deadendsSet = processDeadends(deadends);
+        int targetVal = str2Val(target);
+
+        if (targetVal == 0) {
+            return 0;
+        }
+        if (deadendsSet.contains(targetVal) || deadendsSet.contains(0)) {
+            return -1;
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+        int rootVal = arr2val(0, 0, 0, 0);
+        queue.add(rootVal);
+
+        Set<Integer> allVals = new HashSet<>();
+        allVals.add(rootVal);
+
+        int cengshu = 0;
+        while (!queue.isEmpty()) {
+            cengshu++;
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                Integer val = queue.poll();
+                boolean found = bfs(queue, allVals, val2arr(val), deadendsSet, targetVal);
+                if (found) {
+                    return cengshu;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private boolean bfs(Queue<Integer> queue, Set<Integer> allVals, int[] val, Set<Integer> deadends, int target) {
+        int val1 = val[0], val2 = val[1], val3 = val[2], val4 = val[3];
+        int[] vals = new int[]{
+                arr2val(addVal(val1), val2, val3, val4),
+                arr2val(minusVal(val1), val2, val3, val4),
+                arr2val(val1, addVal(val2), val3, val4),
+                arr2val(val1, minusVal(val2), val3, val4),
+                arr2val(val1, (val2), addVal(val3), val4),
+                arr2val(val1, (val2), minusVal(val3), val4),
+                arr2val(val1, (val2), (val3), addVal(val4)),
+                arr2val(val1, (val2), (val3), minusVal(val4))
+        };
+        for (int i = 0; i < vals.length; i++) {
+            int keyVal = vals[i];
+            if (allVals.contains(keyVal)) {
+                continue;
+            }
+            allVals.add(keyVal);
+            if (deadends.contains(keyVal)) {
+                continue;
+            }
+            if (target == keyVal) {
+                return true;
+            }
+            queue.add(keyVal);
+        }
+        return false;
+    }
+
+    // 老的方法 可以获取 但是耗时较长
+    public int openLock1(String[] deadends, String target) {
         Set<Integer> deadendsSet = processDeadends(deadends);
         int targetVal = str2Val(target);
 
