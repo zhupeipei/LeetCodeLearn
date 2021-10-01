@@ -1,5 +1,7 @@
 package com.aire;
 
+import com.aire.base.TreeNode;
+
 /**
  * Created on 2021/9/22 10:58 下午.
  *
@@ -49,22 +51,4 @@ public class Exercise124 {
         return maxRoot;
     }
 
-    public static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-
-        TreeNode() {
-        }
-
-        TreeNode(int val) {
-            this.val = val;
-        }
-
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
-    }
 }
