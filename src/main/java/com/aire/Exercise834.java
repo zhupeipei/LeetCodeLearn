@@ -28,26 +28,30 @@ public class Exercise834 {
     // ans[A] - ans[B] = cnt[B] - cnt[A] -> ans[A] = ans[B] + N - 2 * cnt[A]
     public int[] sumOfDistancesInTree(int n, int[][] edges) {
         Map<Integer, List<Integer>> map = new HashMap<>();
-        Set<Integer> childs = new HashSet<>();
         for (int[] edge : edges) {
-            if (map.get(edge[0]) == null) {
+            int node0 = edge[0];
+            int node1 = edge[1];
+
+            if (map.get(node0) == null) {
                 List<Integer> list = new ArrayList<>();
-                list.add(edge[1]);
-                map.put(edge[0], list);
+                list.add(node1);
+                map.put(node0, list);
             } else {
-                map.get(edge[0]).add(edge[1]);
+                map.get(node0).add(node1);
             }
-            childs.add(edge[1]);
+
+            if (map.get(node1) == null) {
+                List<Integer> list = new ArrayList<>();
+                list.add(node0);
+                map.put(node1, list);
+            } else {
+                map.get(node1).add(node0);
+            }
+
         }
-        int[] ans = new int[n];
         int rootIndex = 0;
-        for (Integer key : map.keySet()) {
-            if (!childs.contains(key)) {
-                rootIndex = key;
-                break;
-            }
-        }
-        ans[rootIndex] = ansVal(map, rootIndex, 1)[0];
+        int[] ans = new int[n];
+        ans[rootIndex] = ansVal(map, rootIndex, -1, 1)[0];
 
         ans(ans, ans[rootIndex], n, rootIndex, map);
 
@@ -56,7 +60,7 @@ public class Exercise834 {
 
     private void ans(int[] ans, int parentAns, int n, int index, Map<Integer, List<Integer>> map) {
         List<Integer> list = map.get(index);
-        if (list == null) {
+        if (list == null || list.size() == 0) {
             return;
         }
         for (Integer val : list) {
@@ -67,7 +71,7 @@ public class Exercise834 {
 
     private int cnt(int index, Map<Integer, List<Integer>> map) {
         List<Integer> list = map.get(index);
-        if (list == null) {
+        if (list == null || list.size() == 0) {
             return 0;
         }
         int cnt = 0;
@@ -78,16 +82,20 @@ public class Exercise834 {
     }
 
     // 第二个为不包括自身的子树的个数
-    private int[] ansVal(Map<Integer, List<Integer>> map, int index, int cengshu) {
+    private int[] ansVal(Map<Integer, List<Integer>> map, int index, int parentIndex, int cengshu) {
         List<Integer> list = map.get(index);
-        if (list == null) {
+        if (list != null) {
+            // 这里顺带 优化了下数据结构
+            list.remove((Integer) parentIndex);
+        }
+        if (list == null || list.size() == 0) {
             cnt.put(index, 1);
             return new int[]{0, 0};
         }
         int ans = 0;
         int num = list.size();
         for (Integer val : list) {
-            int[] vals = ansVal(map, val, cengshu + 1);
+            int[] vals = ansVal(map, val, index, cengshu + 1);
             ans += cengshu * 1 + vals[0];
             num += vals[1];
         }
