@@ -1,5 +1,7 @@
 package com.aire;
 
+import com.aire.base.ListNode;
+
 public class Exercise002 {
 
     public static void main(String[] args) {
@@ -71,15 +73,6 @@ public class Exercise002 {
                 }
             } while (true);
             return result;
-        }
-    }
-
-    public static class ListNode {
-        int val;
-        ListNode next;
-
-        ListNode(int x) {
-            val = x;
         }
     }
 
