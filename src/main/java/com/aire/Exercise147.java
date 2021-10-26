@@ -13,7 +13,7 @@ public class Exercise147 {
 //        1->2->3->4
         ListNode root = new ListNode(4, new ListNode(2, new ListNode(1, new ListNode(3))));
         Exercise147 t = new Exercise147();//
-        t.insertionSortList(root);
+        root = t.insertionSortList(root);
         t.printListNode(root);
     }
 
@@ -29,27 +29,36 @@ public class Exercise147 {
     // 147. 对链表进行插入排序
     // 对链表进行插入排序。
     public ListNode insertionSortList(ListNode head) {
+        if (head == null) {
+            return head;
+        }
+        if (head.next == null) {
+            return head;
+        }
         ListNode rootNode = new ListNode();
         rootNode.next = head;
 
-        ListNode selectParentNode = rootNode;
-        while (selectParentNode.next != null) {
-            ListNode compareParentNode = rootNode;
-            boolean insertSuccess = false;
-            while (compareParentNode.next != null && compareParentNode.next != selectParentNode.next) {
-                if (compareParentNode.next.val > selectParentNode.next.val) {
-                    ListNode temp = compareParentNode.next;
-                    compareParentNode.next = selectParentNode.next;
-                    selectParentNode.next = temp;
-                    insertSuccess = true;
+        ListNode preNode = head; // 这个表示比较到这个节点结束
+        ListNode selectNode = head.next; // 比较的节点
+        while (selectNode != null) {
+            if (preNode.val <= selectNode.val) {
+                preNode = selectNode;
+                selectNode = preNode.next;
+            } else {
+                preNode.next = selectNode.next;
+                selectNode.next = null;
+                ListNode compareParentNode = rootNode; // 循环比较节点的父节点
+                while (compareParentNode != preNode) {
+                    if (compareParentNode.next.val > selectNode.val) {
+                        ListNode tmp = compareParentNode.next;
+                        compareParentNode.next = selectNode;
+                        selectNode.next = tmp;
+                        break;
+                    }
+                    compareParentNode = compareParentNode.next;
                 }
-                compareParentNode = compareParentNode.next;
+                selectNode = preNode.next;
             }
-            if (insertSuccess) {
-                selectParentNode.next = selectParentNode.next.next;
-            }
-            selectParentNode = selectParentNode.next;
-            printListNode(rootNode);
         }
         return rootNode.next;
     }
