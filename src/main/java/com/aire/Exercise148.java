@@ -12,7 +12,8 @@ import java.util.List;
  */
 public class Exercise148 {
     public static void main(String[] args) {
-        ListNode root = new ListNode(4, new ListNode(2, new ListNode(1, new ListNode(3))));
+        ListNode root = new ListNode(-1, new ListNode(5, new ListNode(3, new ListNode(4, new ListNode(0)))));
+//        ListNode root = new ListNode(4, new ListNode(2, new ListNode(1, new ListNode(3))));
         root = new Exercise148().sortList(root);
         while (root != null) {
             System.out.print(root.val + "-->");
@@ -35,7 +36,179 @@ public class Exercise148 {
         // 方法采用 归并排序 (比较low的归并排序)
 //        return mergeSort(head);
         // 方法采用 归并排序（自上而下）
+//        return mergeSort1(head);
         // 方法采用 归并排序（自下而上）
+        return mergeSort2(head);
+    }
+
+    private ListNode mergeSort2(ListNode head) {
+        ListNode root = new ListNode();
+        root.next = head;
+
+        ListNode node = head;
+        int num = 0;
+        while (node != null) {
+            num++;
+            node = node.next;
+        }
+
+        ListNode head1Par = root;
+        ListNode head2Par = null;
+        ListNode head1 = null;
+        ListNode head2 = null;
+
+        ListNode preNode = root;
+        for (int step = 1; step < num; step *= 2) {
+            head1Par = root;
+            preNode = root;
+            while (head1Par.next != null) {
+                ListNode cur = head1Par;
+                head1 = head1Par.next;
+                for (int i = 0; i < step && cur != null; i++) {
+                    cur = cur.next;
+                }
+                if (cur == null || cur.next == null) {
+                    preNode.next = head1Par.next;
+                    break;
+                }
+                head2Par = cur;
+                head2 = head2Par.next;
+                head2Par.next = null;
+                cur = new ListNode(0, head2);
+                for (int i = 0; i < step && cur != null; i++) {
+                    cur = cur.next;
+                }
+                if (cur == null || cur.next == null) {
+                    head1Par.next = mergeNodes2(head1, head2);
+                    preNode.next = head1Par.next;
+                    break;
+                }
+                ListNode tmp = cur.next;
+                cur.next = null;
+                head1Par.next = mergeNodes2(head1, head2);
+                preNode.next = head1Par.next;
+                preNode = head1Par;
+                while (preNode.next != null) {
+                    preNode = preNode.next;
+                }
+                head1Par = new ListNode(0, tmp);
+            }
+        }
+        return root.next;
+    }
+
+    private ListNode mergeNodes2(ListNode left, ListNode right) {
+        if (left == null) {
+            return right;
+        }
+        if (right == null) {
+            return left;
+        }
+        ListNode root;
+        if (left.val > right.val) {
+            root = right;
+            right = right.next;
+            root.next = null;
+        } else {
+            root = left;
+            left = left.next;
+            root.next = null;
+        }
+        ListNode node = root;
+        while (left != null && right != null) {
+            if (left.val > right.val) {
+                node.next = right;
+                right = right.next;
+                node = node.next;
+            } else {
+                node.next = left;
+                left = left.next;
+                node = node.next;
+            }
+        }
+        if (left == null) {
+            node.next = right;
+        }
+        if (right == null) {
+            node.next = left;
+        }
+        return root;
+    }
+
+    private ListNode mergeSort1(ListNode head) {
+        int len = 0;
+        int middleIndex = 0;
+        ListNode middleNode = head;
+        ListNode node = head;
+        while (node != null) {
+            len++;
+            node = node.next;
+            if (node != null) {
+                len++;
+                middleNode = middleNode.next;
+                middleIndex++;
+                node = node.next;
+            }
+        }
+        if (len == 1) {
+            return head;
+        }
+        if (len == 2) {
+            ListNode right = head.next;
+            head.next = null;
+            return mergeNodes(head, right);
+        }
+        if (middleNode == null) {
+            return head;
+        }
+        ListNode right = middleNode.next;
+        middleNode.next = null;
+        if (len <= 1) {
+            return head;
+        }
+        return mergeNodes(mergeSort1(head), mergeSort1(right));
+    }
+
+    private ListNode mergeNodes(ListNode left, ListNode right) {
+        if (left == null) {
+            return right;
+        }
+        if (right == null) {
+            return left;
+        }
+        ListNode root;
+        if (left.val < right.val) {
+            root = left;
+            left = left.next;
+            root.next = null;
+        } else {
+            root = right;
+            right = right.next;
+            root.next = null;
+        }
+        ListNode node = root;
+        while (left != null && right != null) {
+            if (left.val < right.val) {
+                node.next = left;
+                left = left.next;
+            } else {
+                node.next = right;
+                right = right.next;
+            }
+            if (node.next != null) {
+                node = node.next;
+            }
+            if (node.next != null) {
+                node.next = null;
+            }
+        }
+        if (left == null) {
+            node.next = right;
+        }
+        if (right == null) {
+            node.next = left;
+        }
+        return root;
     }
 
     private ListNode mergeSort(ListNode head) {
