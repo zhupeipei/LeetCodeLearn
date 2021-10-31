@@ -18,13 +18,13 @@ public class ExerciseOfferII062 {
     // boolean startsWith(String prefix) 如果之前已经插入的字符串word 的前缀之一为 prefix ，返回 true ；否则，返回 false 。
     class Trie {
 
-        private TreeNode root;
+        private TreeNode1 root;
 
         /**
          * Initialize your data structure here.
          */
         public Trie() {
-            root = new TreeNode();
+            root = new TreeNode1();
         }
 
         /**
@@ -35,11 +35,11 @@ public class ExerciseOfferII062 {
                 return;
             }
 
-            TreeNode node = root;
+            TreeNode1 node = root;
             for (Character ch : word.toCharArray()) {
                 int index = ch - 'a';
                 if (node.val[index] == null) {
-                    node.val[index] = new TreeNode();
+                    node.val[index] = new TreeNode1();
                 }
                 node = node.val[index];
             }
@@ -53,7 +53,7 @@ public class ExerciseOfferII062 {
             if (word == null || word.length() <= 0) {
                 return false;
             }
-            TreeNode node = root;
+            TreeNode1 node = root;
             for (Character ch : word.toCharArray()) {
                 int index = ch - 'a';
                 if (node.val[index] == null) {
@@ -71,7 +71,7 @@ public class ExerciseOfferII062 {
             if (prefix == null || prefix.length() <= 0) {
                 return false;
             }
-            TreeNode node = root;
+            TreeNode1 node = root;
             for (Character ch : prefix.toCharArray()) {
                 int index = ch - 'a';
                 if (node.val[index] == null) {
@@ -83,9 +83,9 @@ public class ExerciseOfferII062 {
         }
     }
 
-    class TreeNode {
+    class TreeNode1 {
         boolean isEnd; // 是否是结尾
-        TreeNode[] val = new TreeNode[26];
+        TreeNode1[] val = new TreeNode1[26];
     }
 
 }
