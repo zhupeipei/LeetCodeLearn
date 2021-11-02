@@ -12,6 +12,22 @@ public class Exercise153 {
         int left = 0;
         int right = nums.length - 1;
         int mid = -1;
+        int val0 = nums[0], valn = nums[nums.length - 1];
+        while (left < right) {
+            mid = left + ((right - left) >> 1);
+            if (valn < nums[mid]) { // 分段
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return nums[left];
+    }
+
+    public int findMin1(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+        int mid = -1;
         while (left < right) {
             mid = left + ((right - left) >> 1);
             if (nums[mid] < nums[right]) {
