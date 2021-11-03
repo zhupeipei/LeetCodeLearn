@@ -7,9 +7,9 @@ package com.aire;
 public class Exercise33 {
     public static void main(String[] args) {
 //        int[] nums = {4, 5, 6, 7, 0, 1, 2};
-//        int[] nums = {5, 1, 3};
-        int[] nums = {3, 1};
-        System.out.println(new Exercise33().search(nums, 3));
+        int[] nums = {5, 1, 3};
+//        int[] nums = {3, 1};
+        System.out.println(new Exercise33().search(nums, 5));
     }
 
     // 33. 搜索旋转排序数组
@@ -20,16 +20,90 @@ public class Exercise33 {
         int left = 0;
         int right = nums.length - 1;
         int mid;
-        if (nums[0] < nums[nums.length - 1]) {
-            return binarySearch(nums, 0, nums.length - 1, target);
-        }
-        // 这里为分段的情况
         while (left < right) {
             mid = left + (right - left) / 2;
-            if (nums[0] < target) {
-                left
+            if (nums[mid] == target) {
+                return mid;
+            }
+            if (nums[left] < nums[right]) {
+                // 单调上升序列
+                if (nums[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            } else {
+                // 部分有序 先解决mid位置问题 再解决target问题
+                if (nums[left] < nums[mid]) {
+                    if (target < nums[mid] && target >= nums[left]) {
+                        right = mid - 1;
+                    } else {
+                        left = mid + 1;
+                    }
+                } else if (nums[left] == nums[mid]) {
+                    return nums[right] == target ? right : -1;
+                } else {
+                    if (target < nums[mid] || target > nums[right]) {
+                        right = mid - 1;
+                    } else {
+                        left = mid + 1;
+                    }
+                }
             }
         }
+        return nums[left] == target ? left : -1;
+    }
+
+    public int search2(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        int mid;
+        while (left < right) {
+            mid = left + (right - left) / 2;
+            if (nums[left] < nums[right]) {
+                // 这里变成单调上升序列
+                if (nums[mid] < target) {
+                    left = mid + 1;
+                } else if (nums[mid] == target) {
+                    return mid;
+                } else {
+                    right = mid - 1;
+                }
+            } else if (nums[left] > nums[right]) {
+                if (nums[mid] > nums[right]) {
+                    if (target > nums[mid]) {
+                        left = mid + 1;
+                    } else if (target < nums[mid]) {
+                        if (nums[right] == target) {
+                            return right;
+                        } else {
+                            right--;
+                        }
+                    } else {
+                        return mid;
+                    }
+                } else {
+                    if (target > nums[left]) {
+                        left++;
+                        right = mid - 1;
+                    } else if (target == nums[left]) {
+                        return left;
+                    } else {
+                        if (nums[mid] < target) {
+                            left = mid + 1;
+                        } else if (nums[mid] == target) {
+                            return mid;
+                        } else {
+                            right = mid - 1;
+                        }
+                    }
+                }
+            } else {
+                // left == right
+                return nums[left] == target ? left : -1;
+            }
+        }
+        return nums[left] == target ? left : -1;
     }
 
     public int search1(int[] nums, int target) {

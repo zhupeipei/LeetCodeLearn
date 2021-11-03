@@ -7,7 +7,8 @@ package com.aire;
 public class Exercise154 {
     public static void main(String[] args) {
 //        int[] nums = {3, 4, 5, 1, 2};
-        int[] nums = {4, 5, 6, 7, 0, 1, 2};
+//        int[] nums = {4, 5, 6, 7, 0, 1, 2};
+        int[] nums = {3, 1, 3};
         System.out.println(new Exercise154().findMin(nums));
     }
 
@@ -19,6 +20,27 @@ public class Exercise154 {
     //
     // 给你一个可能存在 重复 元素值的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
     public int findMin(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+        int mid;
+        while (left < right) {
+            mid = left + (right - left) / 2;
+            if (nums[left] < nums[right]) {
+                // 这里表示上升序列
+                return nums[left];
+            }
+            if (nums[mid] < nums[right]) {
+                right = mid;
+            } else if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else {
+                right--;
+            }
+        }
+        return nums[left];
+    }
+
+    public int findMin1(int[] nums) {
         int left = 0;
         int right = nums.length - 1;
         int mid;
