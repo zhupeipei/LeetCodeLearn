@@ -81,6 +81,7 @@ public class Exercise139 {
                 for (int j = i - 1; j >= 0; j--) {
                     if (dp[j] && set.contains(s.substring(j + 1, i + 1))) {
                         dp[i] = true;
+                        break;
                     }
                 }
             }
